@@ -8,12 +8,12 @@ endif
 #Std systype
 CC		 = mpicc
 OPTIMIZE = -Wall -g -O3
-MPI_INCL = 
-MPI_LIBS = -lmpi 
+MPI_INCL =
+MPI_LIBS = -lmpi
 GSL_INCL =
-GSL_LIBS = 
-CFITSIO_INCL = 
-CFITSIO_LIBS = 
+GSL_LIBS =
+CFITSIO_INCL = -I/usr/include/cfitsio
+CFITSIO_LIBS =
 HDF5_INCL =
 HDF5_LIBS =
 
@@ -22,36 +22,36 @@ CC      	 =  mpicc
 OPTIMIZE	 = -Ofast -Wall
 MPI_LIBS 	 = -lmpich -L/Users/jdonnert/Dev/lib
 MPI_INCL 	 = -I/Users/jdonnert/Dev/include
-GSL_INCL 	 =  
-GSL_LIBS	 = 
-CFITSIO_INCL = 
-CFITSIO_LIBS = 
+GSL_INCL 	 =
+GSL_LIBS	 =
+CFITSIO_INCL =
+CFITSIO_LIBS =
 HDF5_INCL 	 =
 HDF5_LIBS    =
 endif
 
 ifeq ($(SYSTYPE),getorin.ira.inaf.it)
 CC      	 =  mpicc
-OPTIMIZE	 = -O3 -Wall -g -lmpich #-openmp-report=2 -finline -finline-functions -funroll-loops -xhost  -mkl -use-intel-optimized-headers -ipo4 -fast-transcendentals 
+OPTIMIZE	 = -O3 -Wall -g -lmpich #-openmp-report=2 -finline -finline-functions -funroll-loops -xhost  -mkl -use-intel-optimized-headers -ipo4 -fast-transcendentals
 MPI_LIBS 	 = -L/homes/donnert/Libs/lib -L/homes/donnert/Libs/opt/intel/lib
 MPI_INCL 	 = -I/homes/donnert/Libs/include -I/homes/donnert/Libs/opt/intel/include
-GSL_INCL 	 =  
-GSL_LIBS	 = 
-CFITSIO_INCL = 
-CFITSIO_LIBS = 
+GSL_INCL 	 =
+GSL_LIBS	 =
+CFITSIO_INCL =
+CFITSIO_LIBS =
 HDF5_INCL 	 =
 HDF5_LIBS    =
 endif
 
 ifeq ($(SYSTYPE),mach64.ira.inaf.it) # gcc
 CC      	 =  mpicc
-OPTIMIZE	 =  -g -O2  -march=bdver1 -mtune=native -mprefer-avx128 -mieee-fp -flto 
-MPI_LIBS 	 =  -lmpich -L/homes/donnert/Libs/lib 
-MPI_INCL 	 = -I/homes/donnert/Libs/include 
-GSL_INCL 	 =  
-GSL_LIBS	 = 
-CFITSIO_INCL = 
-CFITSIO_LIBS = 
+OPTIMIZE	 =  -g -O2  -march=bdver1 -mtune=native -mprefer-avx128 -mieee-fp -flto
+MPI_LIBS 	 =  -lmpich -L/homes/donnert/Libs/lib
+MPI_INCL 	 = -I/homes/donnert/Libs/include
+GSL_INCL 	 =
+GSL_LIBS	 =
+CFITSIO_INCL =
+CFITSIO_LIBS =
 HDF5_INCL 	 =
 HDF5_LIBS    =
 endif
@@ -72,8 +72,8 @@ endif
 ifeq ($(SYSTYPE),para33.strw.leidenuniv.nl)
 	CC           =  mpicc
 	OPTIMIZE     =  -g -O3  -march=native -flto
-	MPI_LIBS     =  -lmpich 
-	MPI_INCL     = 
+	MPI_LIBS     =  -lmpich
+	MPI_INCL     =
 	GSL_INCL     = -I/home/jdonnert/data_para/Libs/include
 	GSL_LIBS     = -L/home/jdonnert/data_para/Libs/lib
 	CFITSIO_INCL =
@@ -85,10 +85,10 @@ endif
 ifeq ($(SYSTYPE),MSI)
 	CC           =  mpicc
 	OPTIMIZE     =  -g -O3  -xhost -ipo4
-	MPI_LIBS     =  -lmpich 
-	MPI_INCL     = 
-	GSL_INCL     = 
-	GSL_LIBS     = 
+	MPI_LIBS     =  -lmpich
+	MPI_INCL     =
+	GSL_INCL     =
+	GSL_LIBS     =
 	CFITSIO_INCL =
 	CFITSIO_LIBS =
 	HDF5_INCL    =
@@ -112,7 +112,7 @@ INCLFILES += Config Makefile $(SRCDIR)/config.h
 
 CFLAGS = -fopenmp -std=c99 $(OPTIMIZE) $(CFITSIO_INCL) $(GSL_INCL) $(MPI_INCL)
 
-LIBS = -lm -lgsl -lgslcblas -lcfitsio $(MPI_LIBS) $(GSL_LIBS) $(CFITSIO_LIBS) 
+LIBS = -lm -lgsl -lgslcblas -lcfitsio $(MPI_LIBS) $(GSL_LIBS) $(CFITSIO_LIBS)
 
 %.o : %.c
 	@echo [CC] $@
@@ -124,7 +124,7 @@ $(EXEC)	: settings $(OBJFILES)
 
 $(OBJFILES)	: $(INCLFILES)
 
-$(SRCDIR)/config.h : Config 
+$(SRCDIR)/config.h : Config
 	@echo 'Config -> config.h'
 	@sed '/^#/d; /^$$/d; s/^/#define /g' Config > $(SRCDIR)/config.h
 
@@ -138,8 +138,8 @@ $(SRCDIR)/print_settings.c : Config
 	@echo ');}' >> $(SRCDIR)/print_settings.c
 
 .PHONY : settings
-	
-settings : 
+
+settings :
 	@echo " "
 	@echo 'CC = ' $(CC)
 	@echo 'CFLAGS =' $(CFLAGS)
@@ -147,6 +147,5 @@ settings :
 	@echo 'EXEC =' $(EXEC)
 	@echo " "
 
-clean : 
+clean :
 	rm -f  $(OBJFILES) $(EXEC) src/config.h src/print_settings.c
-
