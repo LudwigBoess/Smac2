@@ -1,6 +1,6 @@
 %% PSmac Parameter File %%
-   
-Cosmology 0         % set to 0 for non-cosmological sims.  Cosmo.h = 1
+
+Cosmology 1         % set to 0 for non-cosmological sims.  Cosmo.h = 1
 
 %% Image Properties, comoving %%
 
@@ -10,8 +10,8 @@ Center_Z 1500
 
 Use_Barycenter 1    % 1 - set to, 2 - set relative to barycenter
 
-XYSize 8000        % set these two ==0 to project whole box
-ZDepth 8000
+XYSize 0        % set these two ==0 to project whole box
+ZDepth 0
 XYPix 1024
 
 %% Projection, see description at EOF %%
@@ -21,13 +21,13 @@ Euler_Angle_2 0     % [deg] along z : (0,0,0)
 
 %% HEALPIX %%
 
-NSide 32          
+NSide 32
 Rmin 1000
 Rmax 1000000
 
-%% I/O Options %% 
+%% I/O Options %%
 
-Input_File ../0.4_50_0.8_1.8/snap_015
+Input_File snap_013
 N_IOTasks 1
 
 NoClobber 0
@@ -36,8 +36,8 @@ Output_File test.fits
 
 %% Effect Selection & Options %%
 
-Effect_Module 12
-Effect_Flag 2
+Effect_Module 5
+Effect_Flag 4
 
 E_min 5e4             % Energy Range [eV]: Xray, Gamma, Synchro
 E_max 1e10
@@ -52,6 +52,9 @@ PitchAngInt 1       % Toggle Pitch angle integration
 t_turb 1e7          % Reacceleration Timescale Cassano 05
 eta_t 0.26          % Fraction turb. Energy in magnetosonic waves
 turb_scale 100      % scale to extrapolate turbulent velocity to
+
+CR_Emin 1.0e1
+CR_Emax 1.0e7
 
 
 %Gadget
@@ -98,8 +101,10 @@ UnitVelocity_in_cm_per_s 	1e5                %  1 km/sec
 %      0 - Thermal
 %      1 - Magnetic
 %      2 - Turbulent
+%      3 - CR Proton
+%      4 - CR Electron
 %  6 - Magnetic Field (req -DBFLD)
-%      0 - Total 
+%      0 - Total
 %      1 - Orthogonal Component
 %      2 - Faraday Rotation Measurement (RM) (=Smac1*1e-4)
 %      3 - Alven Velocity
@@ -115,13 +120,13 @@ UnitVelocity_in_cm_per_s 	1e5                %  1 km/sec
 %      0 - Differential @ E_min
 %      1 - Integrated over [E_min,E_max]
 %  9 - Synchrotron Emission from CR electrons by
-%      numerical integration of spectrum (I,Q,U,[Ipol,chi,Pi]) 
+%      numerical integration of spectrum (I,Q,U,[Ipol,chi,Pi])
 %      0 - Secondary Model (Brunetti 05)
 %      1 - Tabulated Spectrum (binary P-Fkp output)
 %      2 - CRe Power law spectrum (= effect 12)
 %      3 - Read from Simulation
 %      4 - as 2 but with normalisation from Simulation (PIERNIK)
-%      10 - Compressed Tabulated Spectrum in spec/spec_XXX 
+%      10 - Compressed Tabulated Spectrum in spec/spec_XXX
 % 10 - DM Density
 % 11 - DM Annihilation Signal (rho^2)
 % 12 - Synchrotron from powerlaw CRe, analytic formula
@@ -137,15 +142,14 @@ UnitVelocity_in_cm_per_s 	1e5                %  1 km/sec
 %      0 - Mean Free Path (Sarazin 1988)
 %      1 - Collisionality
 % 15 - Shock Finding (shocks.c)
-%      0 - Mach Number 
+%      0 - Mach Number
 %      1 - Time Dependent Artificial Viscosity Parameter (Dolag+ 05)
 
 % Euler Angles, HowTo from Wikipedia:
-% * Rotate the XYZ-system about the Z-axis by Euler_Angle_0. The X-axis 
+% * Rotate the XYZ-system about the Z-axis by Euler_Angle_0. The X-axis
 %   now lies on the line of nodes.
-% * Rotate the XYZ-system again about the now rotated X-axis by 
-%   Euler_Angle_1. The Z-axis is now in its final orientation, and the 
+% * Rotate the XYZ-system again about the now rotated X-axis by
+%   Euler_Angle_1. The Z-axis is now in its final orientation, and the
 %   x-axis remains on the line of nodes.
-% * Rotate the XYZ-system a third time about the new Z-axis by 
+% * Rotate the XYZ-system a third time about the new Z-axis by
 %   Euler_Angle_2.
-
