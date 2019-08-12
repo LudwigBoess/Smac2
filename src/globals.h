@@ -9,8 +9,8 @@
 
 #define VERSION "1.4"
 
-/* 
- * SPH kernel 
+/*
+ * SPH kernel
  */
 
 #ifdef WK_CUBIC
@@ -20,39 +20,50 @@
 #endif
 
 #ifdef WK_QUINTIC
-#define DESNNGB 192			
-#define NGBDEV 1			
-#define NGBMAX (3*DESNNGB)	
+#define DESNNGB 192
+#define NGBDEV 1
+#define NGBMAX (3*DESNNGB)
 #endif
 
 #ifdef WK_WC6
-#define DESNNGB 295			
-#define NGBDEV 1			
-#define NGBMAX (3*DESNNGB)	
+#define DESNNGB 295
+#define NGBDEV 1
+#define NGBMAX (3*DESNNGB)
 #endif
 
 #ifdef WK_WC4
 #define DESNNGB 200
-#define NGBDEV 1			
-#define NGBMAX (3*DESNNGB)	
+#define NGBDEV 1
+#define NGBMAX (3*DESNNGB)
 #endif
 
-/* 
- * MAIN VARIABLES 
+/*
+ *	Constants for BP_REAL_CRs
+ */
+
+#ifdef BP_REAL_CRs
+#define CNST_ME  9.10953e-28
+#define CNST_MP  1.6726e-24
+#define CNST_C   2.9979e10
+#endif
+
+
+/*
+ * MAIN VARIABLES
  */
 
 double *Image, *Weight_Image;
 
 extern struct ParallelInfos {
-	int Rank;		// Rank of local Processor 
-	int NTask;		// Number of Processors 
-	int PartTotal;		// Local Part. statistics 
+	int Rank;		// Rank of local Processor
+	int NTask;		// Number of Processors
+	int PartTotal;		// Local Part. statistics
 	int Npart[N_part_types];
 } Task;
 
 extern struct OpenMP_infos {
-	int NThreads;		// Number of openMP threads 
-	int ThreadID;		// Thread ID of this thread 
+	int NThreads;		// Number of openMP threads
+	int ThreadID;		// Thread ID of this thread
 } Omp;
 #pragma omp threadprivate(Omp)
 
@@ -83,6 +94,10 @@ extern struct SmacProp {	/*parameter from par file */
 	double TurbScale;	/* Scale of turbulent velocity */
 	int SynchroPAngInt;	/* Toggle pitch angle integration */
 	int SynchroIntrRM;	/* Toggle Intrinsic RM */
+	double CR_Emin;		/* Minimum CR Energy for BP_REAL_CRs bins */
+	double CR_Emax;		/* Maximum CR Energy for BP_REAL_CRs bins */
+	double CRe_bound[BP_REAL_CRs+1];	/*!< boundaries of CRe momentum bins */
+    double CRp_bound[BP_REAL_CRs+1];	/*!< boundaries of CRp momentum bins */
 	int CubeType;
 	int NCube;
 	double CubeMin;
@@ -106,23 +121,23 @@ extern struct EffectProp {
 	char Name[MAXLINELENGTH];
 	char Descr[MAXIMAGES + 3][MAXLINELENGTH];
 	char Unit[MAXLINELENGTH];
-	struct requirements {	// of effect 
-		bool PartType[N_part_types];	// Particle Species 
-		char Block[1000][5];	// Blocks required, 4 letters  
+	struct requirements {	// of effect
+		bool PartType[N_part_types];	// Particle Species
+		char Block[1000][5];	// Blocks required, 4 letters
 		bool Tree;
 	} Req;
-	int Nimage;		// Number images projected 
+	int Nimage;		// Number images projected
 } Effect;
 
 extern struct Particle_Data {
-	float Pos[3];		// Position vector 
-	float Vel[3];		// Velocity vector 
-	float Rho;			// Density 
+	float Pos[3];		// Position vector
+	float Vel[3];		// Velocity vector
+	float Rho;			// Density
 	int Type;
 	float Mass;
-	float Hsml;			// Smoothing Length 
+	float Hsml;			// Smoothing Length
 	float VarHsmlFac;
-	unsigned long ID;	// Unique ID 
+	unsigned long ID;	// Unique ID
 } *P;
 
 extern struct Gas_Data {
@@ -164,6 +179,22 @@ extern struct Gas_Data {
 	float VelBulk[3];	// mean of kernel weighted velocity in hsml
 	float VelTurb;		// dispersion of kernel weighted velocities in hsml
 #endif
+#ifdef BP_REAL_CRs
+  // Protons
+    float CRpNorm[BP_REAL_CRs];         /*!< normalization of CR protons spectrum */
+    float CRpSlope[BP_REAL_CRs];        /*!< slope of CR protons spectrum */
+    float CRpCut;                       /*!< cutoff of CR protons spectrum  */
+    float CRpPressure;                  /*!< pressure of CR p */
+
+  // Electrons
+    float CReNorm[BP_REAL_CRs];         /*!< normalization of CR electrons spectrum */
+    float CReSlope[BP_REAL_CRs];        /*!< slope of CR electrons spectrum */
+    float CReCut;                       /*!< cutoff of CR electrons spectrum  */
+    float CRePressure;                  /*!< pressure of CR e */
+#endif
+#ifdef SFR
+    float Sfr;
+#endif
 } *Gas;
 
 #ifdef HEALPIX
@@ -178,10 +209,10 @@ struct Healpix_properties {
 
 struct tree_node {
 	int down;		// To first daughter node or target part
-	int next;		// To next subnode of father or to unkle 
-	float pos[3];	// Center of node 
-	int npart;		// Number of particles in node 
-	float size;		// Spatial extent of node 
+	int next;		// To next subnode of father or to unkle
+	float pos[3];	// Center of node
+	int npart;		// Number of particles in node
+	float size;		// Spatial extent of node
 } *tree;
 
 /* Parameter File Tags, also used to write fits header */
