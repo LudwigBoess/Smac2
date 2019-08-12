@@ -27,3 +27,19 @@ void Turb_Pressure(int ipart, double *result)
 
 	return;
 }
+
+void CRp_Pressure(int ipart, double *result)
+{
+#ifdef BP_REAL_CRs
+	result[0] = Gas[ipart].CRpPressure * Unit.Mass / p2(Unit.Time);
+#endif
+	return;
+}
+
+void CRe_Pressure(int ipart, double *result)
+{
+#ifdef BP_REAL_CRs
+	result[0] = Gas[ipart].CRePressure * Unit.Mass / p2(Unit.Time);
+#endif
+	return;
+}

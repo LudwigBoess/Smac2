@@ -14,8 +14,8 @@
 void select_effect_module(int choice)
 {
 	int i;
-	char message[MAXLINELENGTH] = " ",	// Printed after unit 
-	    message2[MAXLINELENGTH] = " ";	// Helper 
+	char message[MAXLINELENGTH] = " ",	// Printed after unit
+	    message2[MAXLINELENGTH] = " ";	// Helper
 
 	start_timing(CPU_EFFECT);
 
@@ -37,41 +37,41 @@ void select_effect_module(int choice)
 
 	/* pointers */
 	effect_func_ptr = NULL;
-	metric_func_ptr = &Metric_Hsml2;	// measure cost, h^2 is usually good 
+	metric_func_ptr = &Metric_Hsml2;	// measure cost, h^2 is usually good
 
-	prep_func_ptr = NULL;	// do stuff before the loop 
-	post_func_ptr = NULL;	// do stuff after the loop 
+	prep_func_ptr = NULL;	// do stuff before the loop
+	post_func_ptr = NULL;	// do stuff after the loop
 
 	switch (choice) {	// Choose effect
 
 	case 0:
-		
+
 		switch (Param.Effect_Flag) {
-		
+
 		case 0:
-			
+
 			strcpy(Effect.Name, "2D Gas Density");	/* Name */
 			strcpy(Effect.Descr[0], Effect.Name);
 			strcpy(Effect.Unit, "[g/cm^2]");	/* Unit of image */
-			
+
 			Effect.Req.PartType[0] = true;	/* Particle types required */
-			
+
 			effect_func_ptr = &Density;	/* Point to effect function */
 			weight_func_ptr = &Part_Weight_One;	/* No weighting */
-		
+
 			break;
-		
+
 		case 1:
-			
+
 			strcpy(Effect.Name, "3D Electron Number Density");
 			strcpy(Effect.Descr[0], Effect.Name);
 			strcpy(Effect.Unit, "[1/cm^2]");
-			
+
 			Effect.Req.PartType[0] = true;
-			
+
 			effect_func_ptr = &NumDensity;
 			weight_func_ptr = &Part_Weight_One;
-			
+
 			break;
 		}
 
@@ -89,183 +89,183 @@ void select_effect_module(int choice)
 		Effect.Req.PartType[0] = true;
 
 		switch (Param.Effect_Flag) {
-		
+
 		case 0:
-		
+
 			strcpy(Effect.Name, "Velocity");
 			strcpy(Effect.Req.Block[iEffect++], "VEL ");
-			
+
 			effect_func_ptr = &Vel;
-			
+
 			break;
-		
+
 		case 1:
-		
+
 			strcpy(Effect.Name, "RMS velocity around central");
 			strcpy(Effect.Req.Block[iEffect++], "VELT");
-			
+
 			effect_func_ptr = &Velt;
-			
+
 			break;
 
 		case 2:
-		
+
 			strcpy(Effect.Name, "RMS velocity around mean");
 			strcpy(Effect.Req.Block[iEffect++], "VRMS");
-			
+
 			effect_func_ptr = &Vrms;
-			
+
 			break;
 
 		case 3:
-		
+
 			strcpy(Effect.Name, "Mean velocity in hsml");
 			strcpy(Effect.Req.Block[iEffect++], "VBULK");
 			strcpy(Effect.Req.Block[iEffect++], "TNGB");
-			
+
 			effect_func_ptr = &Vbulk;
-			
+
 			break;
 
 		case 4:
-		
+
 			strcpy(Effect.Name, "Velocity Divergence in hsml");
 			strcpy(Effect.Req.Block[iEffect++], "VDIV");
-			
+
 			effect_func_ptr = &Vdiv;
-			
+
 			break;
 
 		case 5:
-		
+
 			strcpy(Effect.Name, "Velocity Rotation in hsml");
 			strcpy(Effect.Req.Block[iEffect++], "VROT");
-			
+
 			effect_func_ptr = &Vrot;
-			
+
 			break;
 
 		case 6:
-		
+
 			strcpy(Effect.Name, "Speed of Sound");
 			strcpy(Effect.Req.Block[iEffect++], "VEL ");
-		
+
 			effect_func_ptr = &Vsound;
-			
+
 			break;
 
 		case 7:
-		
+
 			strcpy(Effect.Name,
 			       "Scaled RMS velocity around central");
 			strcpy(Effect.Req.Block[iEffect++], "VELT");
-			
+
 			effect_func_ptr = &Velt_scaled;
 
 			sprintf(message, "Scaling Velt to <%g> kpc \n",
 				Param.TurbScale * Unit.Length / kpc2cgs);
-			
+
 			break;
 
 		case 8:
-		
+
 			strcpy(Effect.Name, "Scaled RMS velocity around mean");
 			strcpy(Effect.Req.Block[iEffect++], "VRMS");
-			
+
 			effect_func_ptr = &Vrms_scaled;
 
 			sprintf(message, "Scaling Vrms to <%g> kpc \n",
 				Param.TurbScale * Unit.Length / kpc2cgs);
-			
+
 			break;
 
 		case 9:
-		
+
 			strcpy(Effect.Name,
 			       "RMS tangential velocity around mean");
 			strcpy(Effect.Req.Block[iEffect++], "VTAN");
-			
+
 			effect_func_ptr = &Vtan;
-			
+
 			break;
 
 		case 10:
-		
+
 			strcpy(Effect.Name, "RMS radial velocity around mean");
 			strcpy(Effect.Req.Block[iEffect++], "VRAD");
-			
+
 			effect_func_ptr = &Vrad;
-			
+
 			break;
 
 		case 11:
-		
+
 			strcpy(Effect.Name, "Velocity perpendicular to LoS");
 			strcpy(Effect.Req.Block[iEffect++], "VEL ");
-			
+
 			effect_func_ptr = &Vel_perp;
-			
+
 			break;
 
 		case 12:
-		
+
 			strcpy(Effect.Name, "Vorticity");
 			strcpy(Effect.Req.Block[iEffect++], "VORT");
-			
+
 			effect_func_ptr = &Vorticity;
-			
+
 			break;
 
 		case 13:
-		
+
 			strcpy(Effect.Name, "Kernel Weighted Velocity");
 			strcpy(Effect.Req.Block[iEffect++], "VEL ");
-			
+
 			effect_func_ptr = &Kernel_weighted_velocity;
-			
+
 			Effect.Req.Tree = true;
-			
+
 			break;
 
 		case 14:
-		
+
 			strcpy(Effect.Name, "Kernel Weighted Bulk Velocity");
 			strcpy(Effect.Req.Block[iEffect++], "VEL ");
-			
+
 			effect_func_ptr = &Kernel_weighted_bulk_velocity;
-			
+
 			Effect.Req.Tree = true;
-			
+
 			break;
 
 		case 15:
-		
+
 			strcpy(Effect.Name,
 			       "Kernel Weighted Velocity Dispersion");
 			strcpy(Effect.Req.Block[iEffect++], "VEL ");
-			
+
 			effect_func_ptr = &Kernel_weighted_velocity_dispersion;
-			
+
 			Effect.Req.Tree = true;
-			
+
 			break;
 
 		case 16:
-		
+
 			strcpy(Effect.Name, "Turbulent Energy");
 			strcpy(Effect.Req.Block[iEffect++], "VEL ");
 
 			effect_func_ptr = &Turbulent_energy;
-			
+
 			Effect.Req.Tree = true;
-			
+
 			break;
 		} // switch Effect_Flag
 
 		weight_func_ptr = &Part_Weight_Rho;
 
 		strcpy(Effect.Descr[0], Effect.Name);
-		
+
 		break;
 
 	case 2:
@@ -286,18 +286,18 @@ void select_effect_module(int choice)
 		break;
 
 	case 3:
-		
+
 		switch (Param.Effect_Flag) {
-		
+
 		case 0:
-			
+
 			strcpy(Effect.Name, "Reacceleration Coefficient");
 			strcpy(Effect.Unit, "[1/s]");
 
 			strcpy(Effect.Descr[0], "Dpp/p^2");
 
 			Effect.Req.PartType[0] = true;
-			
+
 			strcpy(Effect.Req.Block[iEffect++], "U   ");
 			strcpy(Effect.Req.Block[iEffect++], "VRMS");
 			strcpy(Effect.Req.Block[iEffect++], "BFLD");
@@ -312,14 +312,14 @@ void select_effect_module(int choice)
 			break;
 
 		case 1:
-		
+
 			strcpy(Effect.Name, "Reacceleration Timescale");
 			strcpy(Effect.Unit, "[s]");
 
 			strcpy(Effect.Descr[0], "tau_reacc");
 
 			Effect.Req.PartType[0] = true;
-			
+
 			strcpy(Effect.Req.Block[iEffect++], "U   ");
 			strcpy(Effect.Req.Block[iEffect++], "VRMS");
 			strcpy(Effect.Req.Block[iEffect++], "BFLD");
@@ -330,18 +330,18 @@ void select_effect_module(int choice)
 			effect_func_ptr = &Tau_reacc;
 			weight_func_ptr = &Part_Weight_Rho;
 			metric_func_ptr = &Metric_One;
-			
+
 			break;
 
 		case 2:
-		
+
 			strcpy(Effect.Name, "Cooling Timescale");
 			strcpy(Effect.Unit, "[s]");
 
 			strcpy(Effect.Descr[0], "tau_rad");
 
 			Effect.Req.PartType[0] = true;
-			
+
 			strcpy(Effect.Req.Block[iEffect++], "BFLD");
 
 			set_Dpp_factors();
@@ -361,82 +361,82 @@ void select_effect_module(int choice)
 	case 4:
 
 		switch (Param.Effect_Flag) {
-		
+
 		case 0:
-		
+
 			strcpy(Effect.Name, "Mass Weighted Temperature");
-			
+
 			weight_func_ptr = &Part_Weight_Rho;
-			
+
 			strcpy(Effect.Unit, "[K]");
-			
+
 			effect_func_ptr = &Temp;
-			
+
 			break;
 
 		case 1:
-			
+
 			strcpy(Effect.Name, "Sound speed");
-			
+
 			weight_func_ptr = &Part_Weight_Rho;
-			
+
 			effect_func_ptr = &Soundspeed;
-			
+
 			strcpy(Effect.Unit, "[cm/s]");
-			
+
 			break;
 
 		case 2:	/* Borgani 01 */
-		
+
 			strcpy(Effect.Name, "Emission Weighted Temperature");
-			
+
 			weight_func_ptr = &Part_Weight_Emission;
-			
+
 			strcpy(Effect.Unit, "[K]");
-			
+
 			effect_func_ptr = &Temp;
-			
+
 			break;
 
 		case 3:	/* Mazzotta 04 */
-		
+
 			strcpy(Effect.Name, "Spectroscopic Temperature");
-			
+
 			weight_func_ptr = &Part_Weight_Spectroscopic;
-			
+
 			strcpy(Effect.Unit, "[K]");
-			
+
 			effect_func_ptr = &Temp;
-			
+
 			break;
 
 		case 4:	/* like smac1 */
-		
+
 			strcpy(Effect.Name, "Xray Band EW Temperature");
-			
+
 			weight_func_ptr = &Part_Weight_XrayBand;
-			
+
 			strcpy(Effect.Unit, "[K]");
-			
+
 			effect_func_ptr = &Temp;
-			
+
 			break;
 		} // switch Effect_Flag
 
 		strcpy(Effect.Descr[0], Effect.Name);
-		
+
 		Effect.Req.PartType[0] = true;
-		
+
 		strcpy(Effect.Req.Block[iEffect++], "U   ");
 
 		break;
 
 	case 5:
-		
+
 		switch (Param.Effect_Flag) {
-		
+
 		case 0:
-		
+
 			strcpy(Effect.Name, "Thermal Pressure");
 			strcpy(Effect.Descr[0], Effect.Name);
 			strcpy(Effect.Unit, "[g/s^2/cm]");
@@ -445,11 +445,11 @@ void select_effect_module(int choice)
 
 			effect_func_ptr = &Therm_Pressure;
 			weight_func_ptr = &Part_Weight_Rho;
-			
+
 			break;
 
 		case 1:
-		
+
 			strcpy(Effect.Name, "Magnetic Pressure");
 			strcpy(Effect.Descr[0], Effect.Name);
 			strcpy(Effect.Unit, "[g/s^2/cm]");
@@ -460,11 +460,11 @@ void select_effect_module(int choice)
 
 			effect_func_ptr = &Magn_Pressure;
 			weight_func_ptr = &Part_Weight_Rho;
-		
+
 			break;
 
 		case 2:
-		
+
 			strcpy(Effect.Name, "Turbulent Pressure");
 			strcpy(Effect.Descr[0], Effect.Name);
 			strcpy(Effect.Unit, "[g/s^2/cm]");
@@ -475,102 +475,130 @@ void select_effect_module(int choice)
 
 			effect_func_ptr = &Turb_Pressure;
 			weight_func_ptr = &Part_Weight_Rho;
-			
+
+			break;
+
+        case 3:
+			strcpy(Effect.Name, "CR Proton Pressure");
+			strcpy(Effect.Descr[0], Effect.Name);
+			strcpy(Effect.Unit, "[g/s^2/cm]");
+
+			Effect.Req.PartType[0] = true;
+
+			strcpy(Effect.Req.Block[iEffect++], "CRpP");
+
+			effect_func_ptr = &CRp_Pressure;
+			weight_func_ptr = &Part_Weight_Rho;
+
+			break;
+
+		case 4:
+			strcpy(Effect.Name, "CR Electron Pressure");
+			strcpy(Effect.Descr[0], Effect.Name);
+			strcpy(Effect.Unit, "[g/s^2/cm]");
+
+			Effect.Req.PartType[0] = true;
+
+			strcpy(Effect.Req.Block[iEffect++], "CReP");
+
+			effect_func_ptr = &CRe_Pressure;
+			weight_func_ptr = &Part_Weight_Rho;
+
 			break;
 		} // switch Effect_Flag
 
 		break;
 
 	case 6:
-		
+
 		switch (Param.Effect_Flag) {
-		
+
 		case 0:
-		
+
 			strcpy(Effect.Name, "Total Magnetic Field Strength");
 			strcpy(Effect.Unit, "[G]");
-			
+
 			effect_func_ptr = &bfld;
-			
+
 			weight_func_ptr = &Part_Weight_Rho;
-			
+
 			break;
 
 		case 1:
-		
+
 			strcpy(Effect.Name,"Orthogonal Magnetic Field Strength");
 			strcpy(Effect.Unit, "[G]");
-			
+
 			effect_func_ptr = &bfld_orth;
 			weight_func_ptr = &Part_Weight_Rho;
-			
+
 			break;
 
 		case 2:
-		
+
 			strcpy(Effect.Name, "Faraday Rotation Measurement (RM)");
 			strcpy(Effect.Unit, "[rad/cm^2]");
 			sprintf(message, "\nUNITS CHANGED BY 1E4 FROM SMAC I\n");
 
 			set_faraday_factors();
-			
+
 			effect_func_ptr = &faraday_rotation;
 			weight_func_ptr = &Part_Weight_Physical;
-			
+
 			break;
 
 		case 3:
-		
+
 			strcpy(Effect.Name, "Alven Velocity");
 			strcpy(Effect.Unit, "[km/s]");
-			
+
 			effect_func_ptr = &alven_vel;
-			
+
 			weight_func_ptr = &Part_Weight_Rho;
-			
+
 			strcpy(Effect.Descr[0], "v_a = sqrt(B^2/rho /4/pi)");
-			
+
 			break;
 
 		case 4:
-		
+
 			strcpy(Effect.Name, "Div(B)*Hsml/B");
 			strcpy(Effect.Unit, "[1]");
-			
+
 			effect_func_ptr = &divB;
-			
+
 			weight_func_ptr = &Part_Weight_Rho;
-			
+
 			strcpy(Effect.Req.Block[iEffect++], "DIVB");
 			strcpy(Effect.Descr[0], "");
-			
+
 			break;
 
 		case 5:
-		
+
 			strcpy(Effect.Name, "Plasma Beta");
 			strcpy(Effect.Unit, "[1]");
-			
+
 			effect_func_ptr = &plasma_beta;
 			weight_func_ptr = &Part_Weight_Rho;
-			
+
 			strcpy(Effect.Req.Block[iEffect++], "BFLD");
 			strcpy(Effect.Descr[0], "");
-			
+
 			break;
 
 		default:
-		
+
 			Assert(0, "This Subflag doesn't exist");
-			
+
 			break;
 		} // switch Effect_Flag
 
 
 		strcpy(Effect.Descr[0], Effect.Name);
-		
+
 		Effect.Req.PartType[0] = true;
-		
+
 		strcpy(Effect.Req.Block[iEffect++], "BFLD");
 
 		break;
@@ -578,103 +606,103 @@ void select_effect_module(int choice)
 	case 7:
 
 		Effect.Req.PartType[0] = true;
-		
+
 		strcpy(Effect.Req.Block[iEffect++], "U   ");
-		
+
 		switch (Param.Effect_Flag) {
-		
+
 		case 0:
-		
+
 			strcpy(Effect.Name, "Compton-y Parameter");
-			
+
 			effect_func_ptr = &comptonY;
-			
+
 			set_sz_factors(false);
-			
+
 			break;
 
 		case 1:
-		
+
 			strcpy(Effect.Name, "Thermal Sunyaev Zeldovich Effect (DT/T)");
 
 			effect_func_ptr = &tSz;
-			
+
 			set_sz_factors(false);
-			
+
 			break;
 
 		case 2:
-		
+
 			strcpy(Effect.Name,"Thermal Sunyaev Zeldovich Effect (DI/I)");
 
 			effect_func_ptr = &tSz;
-			
+
 			set_sz_factors(true);
-			
+
 			break;
 
 		case 3:
-		
+
 			strcpy(Effect.Name, "Kinetic Sunyaev Zeldovich Effect (DT/T)");
 
 			effect_func_ptr = &kSz;
-			
+
 			set_sz_factors(false);
-			
+
 			break;
 
 		case 4:
-			
+
 			strcpy(Effect.Name, "Kinetic Sunyaev Zeldovich Effect (DI/I)");
-	
+
 			effect_func_ptr = &kSz;
-			
+
 			set_sz_factors(true);
-			
+
 			break;
 		} // switch Effect_Flag
 
 		strcpy(Effect.Unit, "none");
 		strcpy(Effect.Descr[0], Effect.Name);
-		
+
 		sprintf(message, "Frequency = %g Ghz => x = %g\n\n"
 			"DEFINITIONS DIFFERENT FROM SMAC I\n",
 			Param.Freq / 1e9, h_planck * Param.Freq / (k_B * Tcmb));
-		
+
 		weight_func_ptr = &Part_Weight_Physical;
-		
+
 		break;
 
 	case 8:
 
 		switch (Param.Effect_Flag) {
-		
+
 		case 0:
-	
+
 			strcpy(Effect.Name, "Differential Gamma Rays from CRs");
 			strcpy(Effect.Unit, "[1/cm^2/erg]");
-			
+
 			effect_func_ptr = &crGamma_dif;
 
 			sprintf(message, "@ E_min = %g GeV\nX_cr = %g\na_crp = %g\n",
 				Param.E_min * 1e-9, Param.X_crp, Param.a_crp);
-			
+
 			break;
-		
+
 		case 1:
-			
+
 			strcpy(Effect.Name, "Integral Gamma Rays from CRs");
 			strcpy(Effect.Unit, "[1/cm^2]");
-			
+
 			effect_func_ptr = &crGamma_int;
-			
+
 			sprintf(message, "E_min = %e GeV\n"
 				"E_max = %e GeV\n"
 				"X_cr  = %g\n"
 				"a_crp = %g\n",
 				Param.E_min * 1e-9, Param.E_max * 1e-9,
 				Param.X_crp, Param.a_crp);
-			
+
 			break;
 		} // switch Effect_Flag
 
@@ -689,18 +717,18 @@ void select_effect_module(int choice)
 		strcpy(Effect.Descr[0], Effect.Name);
 
 		Effect.Req.PartType[0] = true;
-		
+
 		break;
 
 	case 9:
-		
+
 		strcpy(Effect.Unit, "[erg*s/cm^2]");
 
 		weight_func_ptr = &Part_Weight_Physical;
 		effect_func_ptr = &synchrotron;
-		metric_func_ptr = &Metric_One;	// particle dominated 
+		metric_func_ptr = &Metric_One;	// particle dominated
 
-		set_synchro_factors(Param.Effect_Flag);	//include prep_func_ptr here 
+		set_synchro_factors(Param.Effect_Flag);	//include prep_func_ptr here
 
 		Effect.Req.PartType[0] = true;
 		strcpy(Effect.Req.Block[iEffect++], "U   ");
@@ -741,7 +769,7 @@ void select_effect_module(int choice)
 		break;
 
 	case 11:
-		
+
 		strcpy(Effect.Name, "DM Annihilation");
 		strcpy(Effect.Unit, "[erg*s/cm^2]");
 		strcpy(Effect.Descr[0], Effect.Name);
@@ -801,12 +829,12 @@ void select_effect_module(int choice)
 #endif
 
 		Effect.Req.PartType[0] = true;
-	
+
 		strcpy(Effect.Req.Block[iEffect++], "U   ");
 		strcpy(Effect.Req.Block[iEffect++], "BFLD");
 		strcpy(Effect.Req.Block[iEffect++], "MACH");
-	
-		sprintf(message, "CR Spectral Index s = %1.4f \nX_CRp = %g\n", 
+
+		sprintf(message, "CR Spectral Index s = %1.4f \nX_CRp = %g\n",
 				Param.a_crp, Param.X_crp);
 
 		break;
@@ -816,7 +844,7 @@ void select_effect_module(int choice)
 #ifndef RADTRANSFER
 		Assert(0, "This effect requires RADTRANSFER");
 #endif
-		
+
 		strcpy(Effect.Name, "Ionized Hydrogen Fraction");
 		strcpy(Effect.Unit, "[1/cm^3]");
 		strcpy(Effect.Descr[0], Effect.Name);
@@ -826,17 +854,17 @@ void select_effect_module(int choice)
 		metric_func_ptr = &Metric_Hsml2;
 
 		Effect.Req.PartType[0] = true;
-		
+
 		strcpy(Effect.Req.Block[iEffect++], "nHII");
-	
+
 		break;
 
 	case 14:
 
 		switch (Param.Effect_Flag) {
-		
+
 		case 0:
-		
+
 			strcpy(Effect.Name,
 			       "Mean Free Path from Coulomb Scattering");
 			strcpy(Effect.Unit, "[cm]");
@@ -847,11 +875,11 @@ void select_effect_module(int choice)
 			metric_func_ptr = &Metric_Hsml2;
 
 			Effect.Req.PartType[0] = true;
-		
+
 			break;
 
 		case 1:
-			
+
 			strcpy(Effect.Name, "Collisionality from Coulomb Scattering");
 			strcpy(Effect.Unit, "n/a");
 			strcpy(Effect.Descr[0], Effect.Name);
@@ -868,11 +896,11 @@ void select_effect_module(int choice)
 		break;
 
 	case 15:
-		
+
 		switch (Param.Effect_Flag) {
-		
+
 		case 0:
-		
+
 			strcpy(Effect.Name, "Mach Number (Beck+ 2011)");
 			strcpy(Effect.Unit, " n/a ");
 			strcpy(Effect.Descr[0], Effect.Name);
@@ -912,24 +940,37 @@ void select_effect_module(int choice)
 
 		break;
 
+	case 16:
+		strcpy(Effect.Name, "SFR");
+		strcpy(Effect.Unit, " [M_sun/yr] ");
+		strcpy(Effect.Descr[0], Effect.Name);
+
+		effect_func_ptr = &Sfr;
+		weight_func_ptr = &Part_Weight_Rho;
+
+		Effect.Req.PartType[0] = true;
+		strcpy(Effect.Req.Block[iEffect++], "SFR ");
+
+		break;
+
 	default:
-			Assert(0, "Effect Flags %d %d not handled", 
+			Assert(0, "Effect Flags %d %d not handled",
 					choice ,Param.Effect_Flag);
 
 			break;
 
 	} // switch choice
-	
+
 	if (! Effect.Req.Tree) {
 
 		strcpy(Effect.Req.Block[iEffect++], "RHO ");
 		strcpy(Effect.Req.Block[iEffect++], "HSML");
-	
+
 	}
 
 	MPI_Barrier(MPI_COMM_WORLD);
 
-	Assert(effect_func_ptr != NULL 
+	Assert(effect_func_ptr != NULL
 			&& weight_func_ptr != NULL
 	       	&& metric_func_ptr != NULL,  "Effect or Weight or Metric not set");
 
