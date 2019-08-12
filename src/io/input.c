@@ -39,7 +39,7 @@ void read_param_file(char *filename)
 {
 
 	FILE *fd;
-	char buf[MAXLINELENGTH]; 
+	char buf[MAXLINELENGTH];
 	int tagDone[MAXTAGS] = { 0 };
 	int i, nt = 0;
 
@@ -221,10 +221,23 @@ void read_param_file(char *filename)
 		addr[nt] = &Unit.Vel;
 		id[nt++] = REAL;
 
+		// LMB
+		strcpy(tag[nt], "CR_Emin");
+		strcpy(comment[nt], "[MeV/c] Min CR Energy");
+		addr[nt] = &Param.CR_Emin;
+		id[nt++] = REAL;
+
+		strcpy(tag[nt], "CR_Emax");
+		strcpy(comment[nt], "[MeV/c] Max CR Energy");
+		addr[nt] = &Param.CR_Emax;
+		id[nt++] = REAL;
+
+
+
 		id[nt] = LASTPARAMETERID;
 
 		Param.NCube = 1;
-			
+
 		if ((fd = fopen(filename, "r"))) {
 
 			sprintf(buf, "%s%s", filename, "-usedvalues");
@@ -234,7 +247,7 @@ void read_param_file(char *filename)
 			while (fgets(buf, MAXLINELENGTH, fd)) {
 
 				char buf1[MAXLINELENGTH] = { "" },buf2[MAXLINELENGTH] = { "" },
-					 buf3[MAXLINELENGTH] = { "" },buf4[MAXLINELENGTH] = { "" }, 
+					 buf3[MAXLINELENGTH] = { "" },buf4[MAXLINELENGTH] = { "" },
 					 buf5[MAXLINELENGTH] = { "" };
 
 				int n = sscanf(buf, "%s%s%s%s%s", buf1,buf2,buf3,buf4,buf5);
@@ -244,13 +257,13 @@ void read_param_file(char *filename)
 
 				if (buf1[0] == '%')
 					continue;
-	
+
 				bool flag_cube = false;
 
 				if ( ! (buf3[0] == '%' || n == 2) ) {  // make a cube
 
 					flag_cube = true;
-				
+
 					printf("\nIterating '%s' from <%s> to <%s>,"
 						" step <%s>\n",	buf1, buf2, buf3, buf4);
 				}
@@ -262,9 +275,9 @@ void read_param_file(char *filename)
 					if ((strcmp(buf1, tag[i]) == 0) && (tagDone[i] != 1)) {
 
 						j = i;
-						
+
 						tagDone[i] = 1;
-						
+
 						break;
 					}
 				}
@@ -274,7 +287,7 @@ void read_param_file(char *filename)
 					switch (id[j]) {
 
 					case REAL:
-						
+
 						*((double *)addr[j]) = atof(buf2);
 
 						if (flag_cube) {
@@ -287,47 +300,47 @@ void read_param_file(char *filename)
 							Param.CubeMax = atof(buf3);
 							Param.CubeStep = atof(buf4);
 
-							Param.NCube = (Param.CubeMax - Param.CubeMin) 
+							Param.NCube = (Param.CubeMax - Param.CubeMin)
 								/ Param.CubeStep + 1;
 						}
 
 						break;
-					
+
 					case STRING:
 
 						strcpy((char *)addr[j], buf2);
-	
+
 						if (flag_cube) {
 
 							Param.CubeType = 2;
-							
+
 							Param.CubePtr = addr[j];
 
 							Param.CubeMin = guess_snapnum(buf2);
 							Param.CubeMax = guess_snapnum(buf3);
 							Param.CubeStep = atof(buf4);
 
-							Param.NCube = (Param.CubeMax - Param.CubeMin) 
+							Param.NCube = (Param.CubeMax - Param.CubeMin)
 								/ Param.CubeStep + 1;
 						}
 
 						break;
-					
+
 					case INT:
-						
+
 						*((int *)addr[j]) = atoi(buf2);
-						
+
 						if (flag_cube) {
 
 							Param.CubeType = 3;
-							
+
 							Param.CubePtr = addr[j];
 
 							Param.CubeMin = atof(buf2);
 							Param.CubeMax = atof(buf3);
 							Param.CubeStep = atof(buf4);
 
-							Param.NCube = (Param.CubeMax - Param.CubeMin) 
+							Param.NCube = (Param.CubeMax - Param.CubeMin)
 								/ Param.CubeStep  + 1;
 						}
 
@@ -335,11 +348,11 @@ void read_param_file(char *filename)
 					}
 				}
 			}
-		
+
 			fclose(fd);
 
 			printf("\n");
-		
+
 		} else
 			Assert(0, "Parameter file not found %s", filename);
 
@@ -360,6 +373,24 @@ void read_param_file(char *filename)
 		Assert(good, "Parameter file incomplete");
 	}
 
+// LMB
+#ifdef BP_REAL_CRs
+	// Check for error in parameter file
+	Assert(Param.CR_Emin < Param.CR_Emax, "Parameter CR_Energy range: Emin >= Emax");
+
+	// store momentum bin boundaries
+	int Nbound;
+	double bin_width;
+	bin_width = log10(Param.CR_Emax/Param.CR_Emin) / BP_REAL_CRs;
+	for( Nbound = 0; Nbound <= BP_REAL_CRs; Nbound++ )
+	  {
+	    Param.CRp_bound[Nbound] = Param.CR_Emin * CNST_MP * CNST_C 	// dimensionless P momenta into cgs
+	    			    * pow(10.0,(bin_width*Nbound));
+		Param.CRe_bound[Nbound] = Param.CR_Emin * CNST_ME * CNST_C 	// dimensionless e momenta into cgs
+	    			    * pow(10.0,(bin_width*Nbound));
+	  }
+#endif
+
 	MPI_Bcast(&Param, sizeof(Param), MPI_BYTE, 0, MPI_COMM_WORLD);
 	MPI_Bcast(&Unit, sizeof(Unit), MPI_BYTE, 0, MPI_COMM_WORLD);
 
@@ -378,10 +409,10 @@ long guess_snapnum(char *fname)
 {
 	char *token, *last_token = NULL, file[MAXLINELENGTH];
 
-	strcpy(file, fname);	// protect fname from strtok 
+	strcpy(file, fname);	// protect fname from strtok
 
 	token = strtok(file, "_");
-	
+
 	while (token != NULL) {
 
 		last_token = token;

@@ -39,14 +39,14 @@ extern void read_snapshot(char *filename)
 	/* Start parallel reading */
 	nFiles = rest_files = find_files(filename);
 
-	if (Param.N_IOTasks > nFiles) 
+	if (Param.N_IOTasks > nFiles)
 		Param.N_IOTasks = nFiles;
 
 	int groupSize = Task.NTask / Param.N_IOTasks;
-	
-	if (Task.NTask % Param.N_IOTasks) 
+
+	if (Task.NTask % Param.N_IOTasks)
 		groupSize++;
-	
+
 	int groupMaster = (Task.Rank / groupSize) * groupSize;
 
 	groupLast = groupMaster + groupSize - 1;
@@ -56,7 +56,7 @@ extern void read_snapshot(char *filename)
 
 	while (rest_files > 0) {	/* Any left ? */
 
-		if (nFiles == 1) { // read 1 to all 
+		if (nFiles == 1) { // read 1 to all
 
 			sprintf(buf, "%s", filename);
 
@@ -65,8 +65,8 @@ extern void read_snapshot(char *filename)
 			MPI_Barrier(MPI_COMM_WORLD);
 
 			rest_files -= 1;
-			
-		} else if (rest_files >= Task.NTask) { // Read in nIO blocks 
+
+		} else if (rest_files >= Task.NTask) { // Read in nIO blocks
 
 			file_number = Task.Rank + (rest_files - Task.NTask);
 
@@ -81,10 +81,10 @@ extern void read_snapshot(char *filename)
 
 			rest_files -= Task.NTask;
 
-			
-		} else if (rest_files >= Param.N_IOTasks) { // Read make nIO groups 
 
-			file_number = groupMaster / groupSize 
+		} else if (rest_files >= Param.N_IOTasks) { // Read make nIO groups
+
+			file_number = groupMaster / groupSize
 				+ (rest_files - Param.N_IOTasks);
 
 			sprintf(buf, "%s.%li", filename, file_number);
@@ -94,11 +94,11 @@ extern void read_snapshot(char *filename)
 			MPI_Barrier(MPI_COMM_WORLD);
 
 			rest_files -= Param.N_IOTasks;
-			
-		} else { // reduce nIO to rest files 
+
+		} else { // reduce nIO to rest files
 
 			groupSize = Task.NTask / rest_files;
-			
+
 			if (Task.NTask % Param.N_IOTasks)
 				groupSize++;
 
@@ -127,7 +127,7 @@ extern void read_snapshot(char *filename)
 	return;
 }
 
-/* Reads and Distributes a file 
+/* Reads and Distributes a file
  * */
 void read_file(char *filename, int ReadTask, int LastTask)
 {
@@ -215,7 +215,7 @@ void read_file(char *filename, int ReadTask, int LastTask)
 		if (Task.Rank == ReadTask) {
 
 			blockExist = find_block(fd, Block.Label);
-			
+
 			int sendExist = blockExist;
 
 			for (task = ReadTask + 1; task < LastTask + 1; task++)
@@ -312,12 +312,12 @@ void read_file(char *filename, int ReadTask, int LastTask)
 							  Block.
 							  Val_per_element);
 
-				if (blocknr == IO_ID)	// set type 
+				if (blocknr == IO_ID)	// set type
 					for (j = 0; j < nRead[i]; j++)
 						P[partOffset + j].Type = i;
 
 			} else if (blocknr == IO_MASS)
-				for (j = 0; j < nRead[i]; j++)	// masses from Header 
+				for (j = 0; j < nRead[i]; j++)	// masses from Header
 					P[partOffset + j].Mass =
 					    Snap.Masstab[i];
 
@@ -381,7 +381,7 @@ int find_files(char *filename)
 	return (nFiles);
 }
 
-/* Basic routine to read data from a file 
+/* Basic routine to read data from a file
  * */
 size_t my_fread(void *ptr, size_t size, size_t nmemb, FILE * stream)
 {
@@ -442,7 +442,7 @@ int find_block(FILE * fd, char *label)
 
 			READF77HEAD;
 
-			if (strncmp(label, blocklabel, 4) != 0) {	// go forward 
+			if (strncmp(label, blocklabel, 4) != 0) {	// go forward
 				fseek(fd, blocksize, 1);
 				blocksize = 0;
 			}
@@ -526,7 +526,7 @@ int read_gadget_head(FILE * fd)
 	fseek(fd, dummysize, 1);
 	READF77HEAD;
 
-	for (i = 0; i < N_part_types; i++) {	// HighWord 
+	for (i = 0; i < N_part_types; i++) {	// HighWord
 		Header.Npart[i] = Npart[i];
 		Header.Nall[i] =
 		    (long long)(Nall[i] + (((long long)NallHW[i]) << 32));
@@ -552,10 +552,10 @@ int read_gadget_block(void *data, char *label, FILE * fd, size_t sizeof_type)
 	return (blocksize);
 }
 
-/* Set Block characteristics 
- * "You are all different" - 
- * "We are all different" - 
- * "I'm not !" 
+/* Set Block characteristics
+ * "You are all different" -
+ * "We are all different" -
+ * "I'm not !"
  * 				(life of brian) */
 void set_block_prop(enum iofields blocknr)
 {
@@ -770,6 +770,80 @@ void set_block_prop(enum iofields blocknr)
 		Block.Data_type = FLOAT;
 		Block.Rmv_comoving = 1;
 		break;
+	// --- LMB
+	case IO_CRpN:
+		Block.Label = "CRpN";
+		Block.Name = "BPCRpNormalization";
+		Block.Npart[0] = Header.Npart[0];
+		Block.Val_per_element = BP_REAL_CRs;
+		Block.Data_type = FLOAT;
+		Block.Rmv_comoving = 1;
+		break;
+	case IO_CRpS:
+		Block.Label = "CRpS";
+		Block.Name = "BPCRpSlope";
+		Block.Npart[0] = Header.Npart[0];
+		Block.Val_per_element = BP_REAL_CRs;
+		Block.Data_type = FLOAT;
+		Block.Rmv_comoving = 1;
+		break;
+	case IO_CRpC:
+		Block.Label = "CRpC";
+		Block.Name = "BPCRpCut";
+		Block.Npart[0] = Header.Npart[0];
+		Block.Val_per_element = 1;
+		Block.Data_type = FLOAT;
+		Block.Rmv_comoving = 1;
+		break;
+	case IO_CRpP:
+		Block.Label = "CRpP";
+		Block.Name = "BPCRpPressure";
+		Block.Npart[0] = Header.Npart[0];
+		Block.Val_per_element = 1;
+		Block.Data_type = FLOAT;
+		Block.Rmv_comoving = 1;
+		break;
+	case IO_CReN:
+		Block.Label = "CReN";
+		Block.Name = "BPCReNormalization";
+		Block.Npart[0] = Header.Npart[0];
+		Block.Val_per_element = BP_REAL_CRs;
+		Block.Data_type = FLOAT;
+		Block.Rmv_comoving = 1;
+		break;
+	case IO_CReS:
+		Block.Label = "CReS";
+		Block.Name = "BPCReSlope";
+		Block.Npart[0] = Header.Npart[0];
+		Block.Val_per_element = BP_REAL_CRs;
+		Block.Data_type = FLOAT;
+		Block.Rmv_comoving = 1;
+		break;
+	case IO_CReC:
+		Block.Label = "CReC";
+		Block.Name = "BPCReCut";
+		Block.Npart[0] = Header.Npart[0];
+		Block.Val_per_element = 1;
+		Block.Data_type = FLOAT;
+		Block.Rmv_comoving = 1;
+		break;
+	case IO_CReP:
+		Block.Label = "CReP";
+		Block.Name = "BPCRePressure";
+		Block.Npart[0] = Header.Npart[0];
+		Block.Val_per_element = 1;
+		Block.Data_type = FLOAT;
+		Block.Rmv_comoving = 1;
+		break;
+	case IO_SFR:
+		Block.Label = "SFR ";
+		Block.Name = "StarFormationRate";
+		Block.Npart[0] = Header.Npart[0];
+		Block.Val_per_element = 1;
+		Block.Data_type = FLOAT;
+		Block.Rmv_comoving = 1;
+		break;
+
 		/*Add above, not below !! */
 	case IO_LASTENTRY:
 		Block.Label = "LAST";
@@ -786,7 +860,7 @@ void set_block_prop(enum iofields blocknr)
 	return;
 }
 
-/*Fill P and Gas with data buffer 'fp'. 
+/*Fill P and Gas with data buffer 'fp'.
  * */
 void empty_comm_buffer(enum iofields blocknr, void *fp, size_t iP, size_t ifp)
 {
@@ -907,6 +981,60 @@ void empty_comm_buffer(enum iofields blocknr, void *fp, size_t iP, size_t ifp)
 #ifdef TIME_DEP_ART_VISC
 		Gas[iP].AlphaVisc = ((float *)fp)[ifp] * Block.Rmv_comoving;
 #endif
+	// BP_REAL_CRs
+	// Protons
+	case IO_CRpN:
+#ifdef BP_REAL_CRs
+		for (i = 0; i < BP_REAL_CRs; i++)
+			Gas[iP].CRpNorm[i] = ((float *)fp)[ifp] * Block.Rmv_comoving;
+#endif
+		break;
+	case IO_CRpS:
+#ifdef BP_REAL_CRs
+		for (i = 0; i < BP_REAL_CRs; i++)
+			Gas[iP].CRpSlope[i] = ((float *)fp)[ifp] * Block.Rmv_comoving;
+#endif
+		break;
+	case IO_CRpC:
+#ifdef BP_REAL_CRs
+		Gas[iP].CRpCut = ((float *)fp)[ifp] * Block.Rmv_comoving;
+#endif
+		break;
+	case IO_CRpP:
+#ifdef BP_REAL_CRs
+		Gas[iP].CRpPressure = ((float *)fp)[ifp] * Block.Rmv_comoving;
+#endif
+		break;
+	// Electrons
+	case IO_CReN:
+#ifdef BP_REAL_CRs
+		for (i = 0; i < BP_REAL_CRs; i++)
+			Gas[iP].CReNorm[i] = ((float *)fp)[ifp] * Block.Rmv_comoving;
+#endif
+		break;
+	case IO_CReS:
+#ifdef BP_REAL_CRs
+		for (i = 0; i < BP_REAL_CRs; i++)
+			Gas[iP].CReSlope[i] = ((float *)fp)[ifp] * Block.Rmv_comoving;
+#endif
+		break;
+	case IO_CReC:
+#ifdef BP_REAL_CRs
+		Gas[iP].CReCut = ((float *)fp)[ifp] * Block.Rmv_comoving;
+#endif
+		break;
+	case IO_CReP:
+#ifdef BP_REAL_CRs
+		Gas[iP].CRePressure = ((float *)fp)[ifp] * Block.Rmv_comoving;
+#endif
+		break;
+
+	case IO_SFR:
+#ifdef SFR
+		Gas[iP].Sfr = ((float *)fp)[ifp] * Block.Rmv_comoving;
+#endif
+		break;
+
 		/*Add above, not below !! */
 	case IO_LASTENTRY:
 		break;
@@ -918,7 +1046,7 @@ int block_required(char *label)
 {
 	const int maxBlocks = 999;
 
-	for (int i = 0; i < maxBlocks; i++) 
+	for (int i = 0; i < maxBlocks; i++)
 		if (!strncmp(label, Effect.Req.Block[i], 4))
 			return 1;
 

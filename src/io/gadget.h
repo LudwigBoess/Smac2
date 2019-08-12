@@ -28,6 +28,15 @@ enum iofields {
 	IO_MACH,
 	IO_VORT,
 	IO_ABVC,
+	IO_CRpN,
+	IO_CRpS,
+	IO_CRpC,
+	IO_CRpP,
+	IO_CReN,
+	IO_CReS,
+	IO_CReC,
+	IO_CReP,
+	IO_SFR,
 	IO_LASTENTRY		/* Keep this entry at the end for termination */
 };
 
