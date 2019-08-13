@@ -144,6 +144,9 @@ UnitVelocity_in_cm_per_s 	1e5                %  1 km/sec
 % 15 - Shock Finding (shocks.c)
 %      0 - Mach Number
 %      1 - Time Dependent Artificial Viscosity Parameter (Dolag+ 05)
+% 16 - Star formation rate
+%
+%
 
 % Euler Angles, HowTo from Wikipedia:
 % * Rotate the XYZ-system about the Z-axis by Euler_Angle_0. The X-axis
