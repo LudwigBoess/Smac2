@@ -7,7 +7,7 @@
 
 #define SAMPLING_SCALE 1	// [pix] where SPH sampl. becomes pixel sampl.
 
-#define VERSION "1.4"
+#define VERSION "1.5"
 
 /*
  * SPH kernel
@@ -35,16 +35,6 @@
 #define DESNNGB 200
 #define NGBDEV 1
 #define NGBMAX (3*DESNNGB)
-#endif
-
-/*
- *	Constants for BP_REAL_CRs
- */
-
-#ifdef BP_REAL_CRs
-#define CNST_ME  9.10953e-28
-#define CNST_MP  1.6726e-24
-#define CNST_C   2.9979e10
 #endif
 
 
@@ -96,8 +86,6 @@ extern struct SmacProp {	/*parameter from par file */
 	int SynchroIntrRM;	/* Toggle Intrinsic RM */
 	double CR_Emin;		/* Minimum CR Energy for BP_REAL_CRs bins */
 	double CR_Emax;		/* Maximum CR Energy for BP_REAL_CRs bins */
-	double CRe_bound[BP_REAL_CRs+1];	/*!< boundaries of CRe momentum bins */
-    double CRp_bound[BP_REAL_CRs+1];	/*!< boundaries of CRp momentum bins */
 	int CubeType;
 	int NCube;
 	double CubeMin;
