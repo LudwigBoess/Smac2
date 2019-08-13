@@ -53,8 +53,8 @@ t_turb 1e7          % Reacceleration Timescale Cassano 05
 eta_t 0.26          % Fraction turb. Energy in magnetosonic waves
 turb_scale 100      % scale to extrapolate turbulent velocity to
 
-CR_Emin 1.0e1
-CR_Emax 1.0e7
+CR_Emin 1.0e1       % Minimum energy for BP_REAL_CRs, as in OpenGadget3 parameterfile
+CR_Emax 1.0e7       % Maximum energy for BP_REAL_CRs, as in OpenGadget3 parameterfile
 
 
 %Gadget
