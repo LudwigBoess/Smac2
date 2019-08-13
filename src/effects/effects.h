@@ -97,6 +97,11 @@ void set_powerlaw_factors(int);
 double cre_spectrum_compressed(double, int);
 void setup_decompression();
 
+/* CR SPECTRA FROM BP_REAL_CRs */
+void synchrotron_bp(int, double *);
+
+
+
 /* MISC */
 void find_central_density();	// for density scaling of CRp norm
 double Cluster_central_density;

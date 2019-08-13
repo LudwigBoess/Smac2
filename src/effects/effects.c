@@ -725,14 +725,23 @@ void select_effect_module(int choice)
 		strcpy(Effect.Unit, "[erg*s/cm^2]");
 
 		weight_func_ptr = &Part_Weight_Physical;
-		effect_func_ptr = &synchrotron;
+		if (Param.Effect_Flag != 3)
+			effect_func_ptr = &synchrotron;
+		else
+			effect_func_ptr = &synchrotron_bp;
+			
 		metric_func_ptr = &Metric_One;	// particle dominated
 
-		set_synchro_factors(Param.Effect_Flag);	//include prep_func_ptr here
+		set_synchro_factors();	//include prep_func_ptr here
 
 		Effect.Req.PartType[0] = true;
 		strcpy(Effect.Req.Block[iEffect++], "U   ");
 		strcpy(Effect.Req.Block[iEffect++], "BFLD");
+#ifdef BP_REAL_CRs
+		strcpy(Effect.Req.Block[iEffect++], "CReN");
+		strcpy(Effect.Req.Block[iEffect++], "CReS");
+		strcpy(Effect.Req.Block[iEffect++], "CReC");
+#endif
 
 		strcpy(Effect.Name, "Synchrotron Total Emission");
 		strcpy(Effect.Descr[0], "Total Intensity");
