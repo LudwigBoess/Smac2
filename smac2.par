@@ -103,6 +103,8 @@ UnitVelocity_in_cm_per_s 	1e5                %  1 km/sec
 %      2 - Turbulent
 %      3 - CR Proton
 %      4 - CR Electron
+%      5 - CRp/Thermal
+%      6 - CRe/Thermal
 %  6 - Magnetic Field (req -DBFLD)
 %      0 - Total
 %      1 - Orthogonal Component

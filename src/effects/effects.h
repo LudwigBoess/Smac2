@@ -40,6 +40,8 @@ void Magn_Pressure(int, double *);	// magnetic Pressure
 void Turb_Pressure(int, double *);	// turbulent Pressure
 void CRp_Pressure(int, double *);	// CR Proton Pressure
 void CRe_Pressure(int, double *);	// CR Electron Pressure
+void CRp_beta(int, double *);	    //  Ratio thermal- to CRp pressure
+void CRe_beta(int, double *);	    // Ratio thermal- to CRe pressure
 
 
 void Temp(int, double *);	// Temperature [K]

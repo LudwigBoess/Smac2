@@ -43,3 +43,22 @@ void CRe_Pressure(int ipart, double *result)
 #endif
 	return;
 }
+
+
+void CRp_beta(int ipart, double *result)
+{
+#ifdef BP_REAL_CRs
+	result[0] = Gas[ipart].CRpPressure /
+				(Gas[ipart].U * P[ipart].Rho * (adiabatic_index - 1));
+#endif
+	return;
+}
+
+void CRe_beta(int ipart, double *result)
+{
+#ifdef BP_REAL_CRs
+	result[0] = Gas[ipart].CRePressure /
+				(Gas[ipart].U * P[ipart].Rho * (adiabatic_index - 1));
+#endif
+	return;
+}

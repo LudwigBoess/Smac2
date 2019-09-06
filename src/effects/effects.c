@@ -505,6 +505,34 @@ void select_effect_module(int choice)
 			weight_func_ptr = &Part_Weight_Rho;
 
 			break;
+
+		case 5:
+			strcpy(Effect.Name, "CR Proton Pressure / Thermal Pressure");
+			strcpy(Effect.Descr[0], Effect.Name);
+			strcpy(Effect.Unit, "");
+
+			Effect.Req.PartType[0] = true;
+
+			strcpy(Effect.Req.Block[iEffect++], "CRpP");
+
+			effect_func_ptr = &CRp_beta;
+			weight_func_ptr = &Part_Weight_Rho;
+
+			break;
+
+        case 6:
+			strcpy(Effect.Name, "CR Electron Pressure / Thermal Pressure");
+			strcpy(Effect.Descr[0], Effect.Name);
+			strcpy(Effect.Unit, "");
+
+			Effect.Req.PartType[0] = true;
+
+			strcpy(Effect.Req.Block[iEffect++], "CReP");
+
+			effect_func_ptr = &CRe_beta;
+			weight_func_ptr = &Part_Weight_Rho;
+
+			break;
 		} // switch Effect_Flag
 
 		break;
@@ -729,7 +757,7 @@ void select_effect_module(int choice)
 			effect_func_ptr = &synchrotron;
 		else
 			effect_func_ptr = &synchrotron_bp;
-			
+
 		metric_func_ptr = &Metric_One;	// particle dominated
 
 		set_synchro_factors();	//include prep_func_ptr here
@@ -738,9 +766,12 @@ void select_effect_module(int choice)
 		strcpy(Effect.Req.Block[iEffect++], "U   ");
 		strcpy(Effect.Req.Block[iEffect++], "BFLD");
 #ifdef BP_REAL_CRs
-		strcpy(Effect.Req.Block[iEffect++], "CReN");
-		strcpy(Effect.Req.Block[iEffect++], "CReS");
-		strcpy(Effect.Req.Block[iEffect++], "CReC");
+		if (Param.Effect_Flag == 3)
+		{
+			strcpy(Effect.Req.Block[iEffect++], "CReN");
+			strcpy(Effect.Req.Block[iEffect++], "CReS");
+			strcpy(Effect.Req.Block[iEffect++], "CReC");
+		}
 #endif
 
 		strcpy(Effect.Name, "Synchrotron Total Emission");
