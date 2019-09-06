@@ -15,7 +15,7 @@ WK_WC6                      // project using Wendland C6 kernel
 #HEALPIX
 
 POLARISATION
-#ADD_IPOL_CHI_PI
+ADD_IPOL_CHI_PI
 #INTRINSIC_RM
 
 RELATIVISTIC_RM_CORRECTION
@@ -37,7 +37,8 @@ SHOCKS
 VORTICITY
 TIME_DEP_ART_VISC
 #VSPH                        // kernel weighted velocity
-BP_REAL_CRs 16
+BP_REAL_CRs 12
+BP_SPECTRUM_SUBGRID 10
 SFR
 
 # For hsml finding
