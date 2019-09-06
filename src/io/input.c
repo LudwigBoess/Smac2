@@ -378,17 +378,6 @@ void read_param_file(char *filename)
 	// Check for error in parameter file
 	Assert(Param.CR_Emin < Param.CR_Emax, "Parameter CR_Energy range: Emin >= Emax");
 
-	// store momentum bin boundaries
-	int Nbound;
-	double bin_width;
-	bin_width = log10(Param.CR_Emax/Param.CR_Emin) / BP_REAL_CRs;
-	for( Nbound = 0; Nbound <= BP_REAL_CRs; Nbound++ )
-	  {
-	    Param.CRp_bound[Nbound] = Param.CR_Emin * CNST_MP * CNST_C 	// dimensionless P momenta into cgs
-	    			    * pow(10.0,(bin_width*Nbound));
-		Param.CRe_bound[Nbound] = Param.CR_Emin * CNST_ME * CNST_C 	// dimensionless e momenta into cgs
-	    			    * pow(10.0,(bin_width*Nbound));
-	  }
 #endif
 
 	MPI_Bcast(&Param, sizeof(Param), MPI_BYTE, 0, MPI_COMM_WORLD);
