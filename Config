@@ -37,9 +37,11 @@ SHOCKS
 VORTICITY
 TIME_DEP_ART_VISC
 #VSPH                        // kernel weighted velocity
+
 BP_REAL_CRs 12
 BP_SPECTRUM_SUBGRID 10
 SFR
+CR_ACC_MODEL 2
 
 # For hsml finding
 OPENMP
