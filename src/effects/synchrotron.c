@@ -35,7 +35,8 @@ extern void add_Ipol_chi_Pi();
 #define CNST_C   2.9979e10
 #define CR_DSlope 1.0e-6
 #define  ELECTRONCHARGE  4.8032e-10
-#define erg2eV 1.6022e-12
+//#define erg2eV 1.6022e-12
+#define erg2eV 6.242e+11
 
 static double *p_bounds;
 static inline double bp_energy_integral( double, double, double, float, float );
@@ -167,9 +168,12 @@ void synchrotron(int ipart, double *j_nu)
 void synchrotron_bp(int ipart, double *j_nu)
 {
 	const double nu = Param.Freq;
+	double p_sub_bounds[BP_SPECTRUM_SUBGRID+1];
+	double sub_bound_width = log10(p_bounds[1]/p_bounds[0]) / BP_SPECTRUM_SUBGRID;
+	double sub_norm[BP_SPECTRUM_SUBGRID];
 
 	double B = 0;		// calc B strength
-	double GeV_factor = 1.e-9;
+	//double GeV_factor = 1.e-9;
 
 	if (Param.SynchroPAngInt)
 		B = length3(Gas[ipart].Bfld);
@@ -196,61 +200,63 @@ void synchrotron_bp(int ipart, double *j_nu)
 
 	double j_para = 0, j_orth = 0;
 
-	for (int i = 0; i < BP_REAL_CRs; i++) { // Simpson rule
+	// loop over all spectral bins
+	for (int i = 0; i < BP_REAL_CRs; i++) {
 
 		double K_orth = 0, K_para = 0, K = 0;
 
-		if ( p_bounds[i+1] > Gas[ipart].CReCut )
-			hbound_proper = Gas[ipart].CReCut;
-		else
-			hbound_proper = p_bounds[i+1];
+		// subdivide spectral bins to loose less energy
+		// prepare bin boundaries
+		for (int j = 0; j <= BP_SPECTRUM_SUBGRID; j++ )
+			p_sub_bounds[j] = p_bounds[i] * pow(10.0,(sub_bound_width*j));
 
-		double norm = Gas[ipart].CReNorm[i] * 1.e20;
+		// prepare norm
+		sub_norm[0] = Gas[ipart].CReNorm[i] * 1.e20;
+		for (int j = 1; j < BP_SPECTRUM_SUBGRID; j++ )
+			sub_norm[j] = sub_norm[j-1] * pow( p_sub_bounds[j]/p_sub_bounds[j-1] , -Gas[ipart].CReSlope[i]);
 
-		double E_E = bp_energy_integral( p_bounds[i], hbound_proper,
-							             norm, Gas[ipart].CReSlope[i],
-						  	             P[ipart].Rho )
-					 * P[ipart].Mass * Unit.Mass * erg2eV * GeV_factor;
-
-		double N_E = bp_density_integral( p_bounds[i], hbound_proper,
-							              norm, Gas[ipart].CReSlope[i],
-						  	              P[ipart].Rho )
-					 * P[ipart].Mass * Unit.Mass;
-
-		x = nu / (nu_c_prefac * p2(E_E) * B);
-
-		if ( (E_E != 0.0) && (x <= X_MAX) && (x >= X_MIN) )
+		// subdivide spectral bins to loose less energy
+		for (int j = 0; j < BP_SPECTRUM_SUBGRID; j++ )
 		{
-		//
-		// printf("%i\t%g\t%g\t%g\t%g\t%g\n", ipart, x,
-		// 								   E_E, N_E,
-		// 								   norm,
-		// 							   	   Gas[ipart].CReSlope[i]);
-
-		K = synchro_kernel(x, &K_orth, &K_para);
-		}
-
-		//F[i] = N_E * K;
-		F = N_E * K;
-
-#ifdef POLARISATION
-		// F_orth[i] = N_E * K_orth;
-		// F_para[i] = N_E * K_para;
-		F_orth = N_E * K_orth;
-		F_para = N_E * K_para;
-#endif
+			if ( p_sub_bounds[j+1] > Gas[ipart].CReCut )
+				hbound_proper = Gas[ipart].CReCut;
+			else
+				hbound_proper = p_sub_bounds[j+1];
 
 
-		// j_nu[0] += F[i];
-		j_nu[0] += F;
+			double E_E = bp_energy_integral( p_sub_bounds[j], hbound_proper,
+								             sub_norm[j], Gas[ipart].CReSlope[i],
+							  	             P[ipart].Rho )
+						 * erg2eV;
 
-#ifdef POLARISATION
-		// j_orth += F_orth[i];
-		// j_para += F_para[i];
-		j_orth += F_orth;
-		j_para += F_para;
-#endif
-	}
+			double N_E = bp_density_integral( p_sub_bounds[j], hbound_proper,
+								              sub_norm[j], Gas[ipart].CReSlope[i],
+							  	              P[ipart].Rho );
+						 //* Unit.Mass;
+
+			x = nu / (nu_c_prefac * p2(E_E) * B);
+
+			if ( (E_E != 0.0) && (x <= X_MAX) && (x >= X_MIN) )
+			{
+			K = synchro_kernel(x, &K_orth, &K_para);
+			}
+
+			F = N_E * K;
+
+	#ifdef POLARISATION
+			F_orth = N_E * K_orth;
+			F_para = N_E * K_para;
+	#endif
+
+			j_nu[0] += F;
+
+	#ifdef POLARISATION
+			j_orth += F_orth;
+			j_para += F_para;
+	#endif
+
+		} // end for loop of subgrid spectrum
+	} // end for loop of spectral bins
 
 	j_nu[0] *= j_nu_prefac * B;
 
