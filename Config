@@ -38,8 +38,8 @@ VORTICITY
 TIME_DEP_ART_VISC
 #VSPH                        // kernel weighted velocity
 
-BP_REAL_CRs 12
-BP_SPECTRUM_SUBGRID 10
+#BP_REAL_CRs 24
+#BP_SPECTRUM_SUBGRID 10
 SFR
 CR_ACC_MODEL 2
 

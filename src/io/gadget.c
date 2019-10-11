@@ -771,6 +771,7 @@ void set_block_prop(enum iofields blocknr)
 		Block.Rmv_comoving = 1;
 		break;
 	// --- LMB
+#ifdef BP_REAL_CRs
 	case IO_CRpN:
 		Block.Label = "CRpN";
 		Block.Name = "BPCRpNormalization";
@@ -835,6 +836,8 @@ void set_block_prop(enum iofields blocknr)
 		Block.Data_type = FLOAT;
 		Block.Rmv_comoving = 1;
 		break;
+#endif
+#ifdef SFR
 	case IO_SFR:
 		Block.Label = "SFR ";
 		Block.Name = "StarFormationRate";
@@ -843,7 +846,7 @@ void set_block_prop(enum iofields blocknr)
 		Block.Data_type = FLOAT;
 		Block.Rmv_comoving = 1;
 		break;
-
+#endif
 		/*Add above, not below !! */
 	case IO_LASTENTRY:
 		Block.Label = "LAST";

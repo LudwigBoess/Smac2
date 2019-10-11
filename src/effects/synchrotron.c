@@ -29,11 +29,11 @@ extern void add_Ipol_chi_Pi();
 // BP_REAL_CRs
 // static inline double bp_energy_integral( double, double, double, float, float );
 // static inline double bp_density_integral(double, double, double, float, float );
-#ifdef BP_REAL_CRs
+//#ifdef BP_REAL_CRs
 #define CNST_ME  9.10953e-28
 #define CNST_MP  1.6726e-24
 #define CNST_C   2.9979e10
-#define CR_DSlope 1.0e-6
+//#define CR_DSlope 1.0e-6
 #define  ELECTRONCHARGE  4.8032e-10
 //#define erg2eV 1.6022e-12
 #define erg2eV 6.242e+11
@@ -41,7 +41,7 @@ extern void add_Ipol_chi_Pi();
 static double *p_bounds;
 static inline double bp_energy_integral( double, double, double, float, float );
 static inline double bp_density_integral(double, double, double, float, float );
-#endif
+//#endif
 
 static double (*spectrum_ptr) (double, int);
 
@@ -167,6 +167,7 @@ void synchrotron(int ipart, double *j_nu)
 
 void synchrotron_bp(int ipart, double *j_nu)
 {
+#ifdef BP_REAL_CRs
 	const double nu = Param.Freq;
 	double p_sub_bounds[BP_SPECTRUM_SUBGRID+1];
 	double sub_bound_width = log10(p_bounds[1]/p_bounds[0]) / BP_SPECTRUM_SUBGRID;
@@ -281,6 +282,7 @@ void synchrotron_bp(int ipart, double *j_nu)
 	j_nu[2] = j_pol * sin_2chi;	// U
 #endif
 
+#endif
 	return;
 }
 

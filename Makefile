@@ -17,6 +17,19 @@ CFITSIO_LIBS =
 HDF5_INCL =
 HDF5_LIBS =
 
+ifeq ($(SYSTYPE),C2PAP)
+CC		 = mpicc
+OPTIMIZE = -Wall -g -O3
+MPI_INCL =
+MPI_LIBS = -lmpi
+GSL_INCL =
+GSL_LIBS =
+CFITSIO_INCL = -I/lrz/sys/libraries/cfitsio/3.28/include
+CFITSIO_LIBS = ${CFITSIO_LIB}
+HDF5_INCL =
+HDF5_LIBS =
+endif
+
 ifeq ($(SYSTYPE),DARWIN) #icc
 CC      	 =  mpicc
 OPTIMIZE	 = -Ofast -Wall

@@ -32,7 +32,7 @@ double cre_spectrum_simulation( double E, int ipart )
 	// 					    norm , Gas[ipart].CReSlope[ibin],
 	// 				  	     P[ipart].Rho);
 
-	return ;
+	return 0.0;
 }
 
 /* spectrum input */

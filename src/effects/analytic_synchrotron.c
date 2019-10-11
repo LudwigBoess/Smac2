@@ -191,7 +191,7 @@ static double Ryu_19_eff(double M)
 {
 	if (M < 2.25)
 		return 0.0;
-	else { // M>2
+	else { // M>2.25
 		if ( M <= 34.0 )
 			return kr_fitting_function(M, -1.5255, 2.4026, -1.2534, 0.2215, 0.0336);
 		else
